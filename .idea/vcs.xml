@@ -2,5 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$APPLICATION_HOME_DIR$/bin/conda" vcs="Git" />
+    <mapping directory="$APPLICATION_HOME_DIR$/bin/conda/pythonProject6" vcs="Git" />
   </component>
 </project>
