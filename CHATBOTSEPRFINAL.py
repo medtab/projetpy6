@@ -1,5 +1,5 @@
 import os
-import pandas as pd  # Vérifiez que pandas est installé
+import pandas as pd
 import spacy
 from sentence_transformers import SentenceTransformer
 import numpy as np
@@ -15,21 +15,28 @@ os.environ["OMP_NUM_THREADS"] = "1"
 # Définir les chemins des fichiers
 script_path = os.path.abspath(__file__)
 base_path = os.path.dirname(script_path)
-csv_path = os.path.join(base_path, r"C:\pycharm\PyCharm Community Edition 2024.2.4\bin\conda\pythonProject6\CHATBOTSEPRFINAL.csv")
-logo_path = os.path.join(base_path, r"C:\pycharm\PyCharm Community Edition 2024.2.4\bin\conda\pythonProject6\Logo_final.png")
-response_image_path = os.path.join(base_path, r"C:\pycharm\PyCharm Community Edition 2024.2.4\bin\conda\pythonProject6\IMG_final).jpg")  # Assurez-vous que le fichier existe
+
+# Chemins des fichiers
+csv_path = os.path.join(base_path, "CHATBOTSEPRFINAL.csv")
+logo_path = os.path.join(base_path, "Logo_final.png")
+response_image_path = os.path.join(base_path, "IMG_final.jpg")
 
 # Chargement des modèles
 @st.cache_resource
 def load_spacy_model():
-    return spacy.load("fr_core_news_sm")  # Modèle français de spaCy
+    try:
+        return spacy.load("fr_core_news_sm")
+    except IOError as e:
+        st.error(f"Erreur lors du chargement du modèle SpaCy : {e}")
+        return None
 
 @st.cache_resource
 def load_sentence_transformer_model():
-    return SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-
-nlp = load_spacy_model()
-model = load_sentence_transformer_model()
+    try:
+        return SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+    except Exception as e:
+        st.error(f"Erreur lors du chargement du modèle SentenceTransformer : {e}")
+        return None
 
 # Chargement des données FAQ
 @st.cache_data
@@ -81,6 +88,8 @@ def chatbot_pipeline(question, faq_data, faq_embeddings):
 
 # Interface Streamlit
 def main():
+    st.title("Chatbot de la Société d'Environnement et de Plantation de Redeyef (SEPR)")
+
     # Afficher le logo en haut de la page
     if os.path.isfile(logo_path):
         logo_image = Image.open(logo_path).resize((100, 100))  # Dimensions ajustées
@@ -88,25 +97,10 @@ def main():
     else:
         st.warning(f"Logo introuvable à l'emplacement : {logo_path}")
 
-    # Titre personnalisé avec CSS
-    st.markdown(
-        """
-        <style>
-        .title {
-            font-size: 30px;
-            color: #4CAF50;
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        </style>
-        <div class="title">Chatbot de la Société d'Environnement et de Plantation de Redeyef (SEPR)</div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Afficher l'emplacement du script dans la barre latérale
-    st.sidebar.write(f"Exécution depuis : {script_path}")
+    # Charger les modèles
+    global nlp, model
+    nlp = load_spacy_model()
+    model = load_sentence_transformer_model()
 
     # Charger les données FAQ
     faq_data = load_faq_data(csv_path)
