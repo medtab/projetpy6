@@ -1,0 +1,5 @@
+panda
+spacy
+numpy
+Sentence Transformers
+scikit-learn
