@@ -1,5 +1,5 @@
-panda
-spacy
-numpy
-Sentence Transformers
-scikit-learn
+panda== 2.2.2
+spacy==3.8.2
+numpy== 1.26.4
+Sentence Transformers==4.46.3
+scikit-learn==1.5.2
